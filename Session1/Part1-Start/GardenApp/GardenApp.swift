@@ -17,5 +17,8 @@ struct GardenApp: App {
             ContentView()
                 .environmentObject(store)
         }
+        .commands {
+            SidebarCommands()
+        }
     }
 }
