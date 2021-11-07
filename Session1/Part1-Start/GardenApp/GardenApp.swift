@@ -19,6 +19,7 @@ struct GardenApp: App {
         }
         .commands {
             SidebarCommands()
+            PlantCommands()
         }
     }
 }

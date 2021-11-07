@@ -8,7 +8,6 @@ The detail view for each garden.
 import SwiftUI
 
 struct GardenDetail: View {
-
     enum ViewMode: String, CaseIterable, Identifiable {
         var id: Self { self }
         case table
@@ -53,6 +52,8 @@ struct GardenDetail: View {
     
     var body: some View {
         table
+            .focusedSceneValue(\.garden, gardenBinding)
+            .focusedSceneValue(\.selection, $selection)
             .searchable(text: $searchText)
             .toolbar {
                 DisplayModePicker(mode: $mode)
