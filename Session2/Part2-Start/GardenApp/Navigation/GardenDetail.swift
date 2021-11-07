@@ -15,7 +15,6 @@ struct GardenDetail: View {
         case gallery
     }
 
-    @EnvironmentObject var store: Store
     @Binding var garden: Garden
     @State var searchText: String = ""
     @SceneStorage("viewMode") private var mode: ViewMode = .table
@@ -26,7 +25,7 @@ struct GardenDetail: View {
     ]
 
     var table: some View {
-        Table(plants, selection: $selection, sortOrder: $sortOrder) {
+        Table(selection: $selection, sortOrder: $sortOrder) {
             TableColumn("Variety", value: \.variety)
 
             TableColumn("Days to Maturity", value: \.daysToMaturity) { plant in
@@ -50,6 +49,16 @@ struct GardenDetail: View {
                     .labelsHidden()
             }
             .width(50)
+        } rows: {
+            ForEach(plants) { plant in
+                TableRow(plant)
+                    .itemProvider { plant.itemProvider }
+            }
+            .onInsert(of: [Plant.draggableType]) { index, providers in
+                Plant.fromItemProviders(providers) { plants in
+                    garden.plants.insert(contentsOf: plants, at: index)
+                }
+            }
         }
     }
 
@@ -73,6 +82,13 @@ struct GardenDetail: View {
         }
         .navigationTitle(garden.name)
         .navigationSubtitle("\(garden.displayYear)")
+        .importsItemProviders(selection.isEmpty ? [] : Plant.importImageTypes) { providers in
+            Plant.importImageFromProviders(providers) { url in
+                for plantID in selection {
+                    garden[plantID].imageURL = url
+                }
+            }
+        }
     }
 }
 
